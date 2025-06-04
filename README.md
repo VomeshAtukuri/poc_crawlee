@@ -1,5 +1,5 @@
 
-```
+
 # 🕷️ AI-Powered Web Crawler & Q&A System
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)  
@@ -19,38 +19,32 @@ Built with **React + Vite**, the UI lets users input a URL for crawling and ask 
 **Backend**:  
 Runs on **Fastify**, handles crawling via **PlaywrightCrawler**, processes content with **embedding models**, stores data in **LanceDB**, and returns intelligent answers using a vector search + LLM combo.
 
+```bash
+             ┌─────────────┐
+             │   Frontend  │
+             │ React + Vite│
+             └─────┬───────┘
+                   │
+                   ▼
+          ┌──────────────────┐
+          │    Fastify API   │◄────────────┐
+          │   /crawl /chat   │             │
+          └──────┬───────────┘             │
+                 ▼                         │
+     ┌───────────────────────┐             │
+     │   PlaywrightCrawler   │             │
+     │   Extract Text Data   │             │
+     └──────────┬────────────┘             │
+                ▼                          │
+     ┌────────────────────────────┐        │
+     │     Embedding Model        │        │
+     │  (e.g. OpenAI / Groq etc.) │        │
+     └──────────┬─────────────────┘        │
+                ▼                          │
+         ┌────────────────────┐            │
+         │   LanceDB (VDB)    │◄──────────
+         └────────────────────┘
 ```
-
-```
-         ┌─────────────┐
-         │   Frontend  │
-         │ React + Vite│
-         └─────┬───────┘
-               │
-               ▼
-      ┌──────────────────┐
-      │    Fastify API   │◄──────────┐
-      │  /crawl /chat    │           │
-      └──────┬───────────┘           │
-             ▼                       │
- ┌────────────────────┐             │
- │  PlaywrightCrawler │             │
- │  Extract Text Data │             │
- └──────┬──────────────┘             │
-        ▼                            │
- ┌────────────────────┐             │
- │   Embedding Model  │             │
- │ (e.g. OpenAI / Groq)│             │
- └──────┬──────────────┘             │
-        ▼                            │
- ┌────────────────────┐             │
- │     LanceDB (VDB)  │─────────────┘
- └────────────────────┘
-```
-
-```
-
-
 ## ✨ Features
 
 ✅ Crawl any public website using headless browser  
@@ -70,29 +64,6 @@ Runs on **Fastify**, handles crawling via **PlaywrightCrawler**, processes conte
 | Vector Store | LanceDB                   |
 | Embedding    | OpenAI / Groq             |
 
----
-
-## 📂 Folder Structure
-
-```
-
-my-crawlee/
-├── backend/
-│   ├── index.ts            # Fastify server setup
-│   ├── crawler.ts          # Website crawling logic
-│   ├── embed.ts            # Embedding + AI integration
-│   ├── lancedb.ts          # LanceDB operations
-│   └── routes/             # API route handlers
-│
-├── frontend/
-│   ├── src/
-│   │   ├── App.tsx         # Main React component
-│   │   ├── components/     # UI components
-│   │   ├── api.ts          # API integration
-│   └── vite.config.ts      # Vite setup
-
-````
-
 
 ## ⚙️ Getting Started
 
@@ -101,7 +72,7 @@ my-crawlee/
 ```bash
 git clone https://github.com/VomeshAtukuri/poc_crawlee.git
 cd poc_crawlee
-````
+```
 
 ### 2. Install Dependencies
 
@@ -169,4 +140,3 @@ npm run dev
 * 📊 Visualize crawl data insights
 * ⚙️ Docker + CI/CD support
 
-```

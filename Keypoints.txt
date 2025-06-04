@@ -1,0 +1,66 @@
+Web Scraping: Extracting data from a website
+
+Web Crawling: Finding links on a website
+
+Dynamic content with user interactions: → PlaywrightCrawler
+
+Dynamic content without needing multi-browser support: → PuppeteerCrawler
+
+Static content or for speed & efficiency: → CheerioCrawler
+
+→ LanceDB
+
+LanceDB is an advanced, open-source vector database crafted for AI/ML tasks, especially those involving large-scale vector searches and retrieval-augmented generation (RAG). It utilizes the Lance format, a cloud-native columnar format optimized for swift access to vector and tabular data both locally and remotely.
+
+🔍 Why Choose LanceDB Over Other Vector Databases?
+LanceDB distinguishes itself in a competitive field with alternatives like Pinecone, Weaviate, FAISS, Milvus, and Qdrant due to its:
+
+1. Foundation on Apache Arrow & Parquet
+LanceDB leverages Apache Arrow for zero-copy reads and efficient I/O, supporting columnar storage, ideal for hybrid search (vector + metadata).
+
+2. Local-first with Cloud-native Capabilities
+Unlike many vector DBs that are cloud-dependent or require server setup, LanceDB:
+Operates embedded locally (similar to SQLite for vectors).
+Scales to the cloud via object storage (S3, GCS), facilitating streaming and analytics.
+
+3. High Performance via SIMD and Parallelism
+Developed in Rust, offering performance through SIMD and multi-threading. It supports cutting-edge ANN algorithms like IVF, HNSW, and PQ for rapid indexing and retrieval.
+
+4. ACID Transactions & Delta-based Updates
+Utilizes Delta-like mechanisms for versioned datasets, ensuring data consistency and streaming ingestion support (ideal for real-time RAG).
+
+5. Seamless Integration
+Effortless integration with Python, LangChain, LlamaIndex, Hugging Face, etc. It natively supports pandas DataFrames, Apache Arrow Tables, and arrays from PyTorch/TensorFlow/Numpy.
+
+6. Zero Infrastructure Overhead
+Perfect for developers needing local development without server dependencies, enabling fast experimentation without service or cluster setup.
+
+✅ Key Use Cases for LanceDB
+1. Retrieval-Augmented Generation (RAG)
+LanceDB can store text embeddings (e.g., from OpenAI, Cohere, HuggingFace) and perform vector + metadata filtering. It's especially beneficial for LLM-powered chatbots, assistants, and Q&A systems.
+
+2. Semantic Search
+Develop semantic search engines for documents, codebases, images, and videos. Store multimodal embeddings (e.g., CLIP vectors for images, BERT for text).
+
+3. ML Dataset Management
+Maintain feature stores and embeddings from ML pipelines. Track versions, lineage, and transformations for model debugging and retraining.
+
+4. On-device/Edge AI
+Due to its embedded nature, LanceDB can operate on laptops, edge devices, and mobile applications for local inference.
+
+5. Streaming & Real-time Applications
+Real-time ingestion and search capabilities are facilitated by its append-only architecture and delta updates.
+
+🧠 Example RAG Workflow
+1. Generate embeddings from documents using OpenAI’s text-embedding-3-small.
+2. Store them in LanceDB (with metadata).
+3. At query time:
+   ▬ Convert user query to embedding.
+   ▬ Conduct vector search + metadata filter.
+   ▬ Input retrieved context into LLM for generation.
+
+
+| Feature       | Necessary? | Why                                                                 |
+| ------------- | ---------- | ------------------------------------------------------------------- |
+| Text Chunking | ✅ Yes      | Prevents input size issues; improves search quality                 |
+| Batching      | ✅ Yes      | Boosts performance; reduces calls; improves memory and I/O handling |

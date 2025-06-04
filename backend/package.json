@@ -1,0 +1,38 @@
+{
+    "name": "my-crawler",
+    "version": "0.0.1",
+    "type": "module",
+    "description": "Crawlee project.",
+    "dependencies": {
+        "@ai-sdk/google": "^1.2.19",
+        "@ai-sdk/groq": "^1.2.9",
+        "@fastify/cors": "^11.0.1",
+        "@lancedb/lancedb": "^0.19.1",
+        "@langchain/openai": "^0.5.11",
+        "ai": "^4.3.16",
+        "async-lock": "^1.4.1",
+        "crawlee": "^3.0.0",
+        "dotenv": "^16.5.0",
+        "fastify": "^5.3.3",
+        "playwright": "*",
+        "zod": "^3.25.48"
+    },
+    "devDependencies": {
+        "@apify/tsconfig": "^0.1.0",
+        "@types/express": "^5.0.2",
+        "@types/node": "^22.15.29",
+        "nodemon": "^3.1.10",
+        "tsx": "^4.19.4",
+        "typescript": "~5.8.0"
+    },
+    "scripts": {
+        "start": "nodemon --watch src --exec npm run start:dev",
+        "start:prod": "node dist/main.js",
+        "start:dev": "tsx src/main.ts",
+        "build": "tsc",
+        "test": "echo \"Error: oops, the actor has no tests yet, sad!\" && exit 1",
+        "postinstall": "npx crawlee install-playwright-browsers"
+    },
+    "author": "It's not you it's me",
+    "license": "ISC"
+}

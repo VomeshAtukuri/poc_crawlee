@@ -2,7 +2,6 @@
 
 # 🕷️ AI-Powered Web Crawler & Q&A System
 
-[![MIT License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)  
 A full-stack application that crawls websites, stores extracted content in a vector database (**LanceDB**), and allows users to ask questions with context-aware, AI-generated answers.
 
 ## 📌 Overview

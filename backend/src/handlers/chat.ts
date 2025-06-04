@@ -8,7 +8,7 @@ import { embedText } from "./embed.js";
 dotenv.config();
 
 const googleGenerativeAI = createGoogleGenerativeAI({
-  apiKey: "AIzaSyBam0c2u7QjjqyK62P4MXqoQgXTPG1tb04",
+  apiKey: process.env.GOOGLE_API_KEY,
 })
 
 // const groq = createGroq({
@@ -71,6 +71,3 @@ export const chat = async (
   const { text } = result;
   return text.trim();
 };
-
-
-// AIzaSyA1NSbrp0-tTd4SpqaO9kgC1pZrux7Z54Y

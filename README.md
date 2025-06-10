@@ -103,7 +103,7 @@ GROQ_API_KEY = your_groq_or_openai_key
 
 ```bash
 cd backend
-npm run dev
+npm start
 ```
 
 **Start Frontend**

@@ -1,101 +1,99 @@
-import { PlaywrightCrawler } from "crawlee";
-import lancedb from "@lancedb/lancedb";
+import { PlaywrightCrawler, RequestQueue, Dataset } from "crawlee";
 import { embedText } from "./embed.js";
+import lancedb from "@lancedb/lancedb";
 
-const databaseDir = "./lancedb";
-const db = await lancedb.connect(databaseDir);
+const db = await lancedb.connect("./lancedb");
 
-export const crawl = async (url: string, Tablename: string) => {
+export const crawl = async (url: string, TableName: string) => {
   console.log("Received URL:", url);
-  console.log("Tablename:", Tablename);
+  console.log("TableName:", TableName);
 
-  const folder = Tablename;
-  const tableNames = await db.tableNames();
+  const folder = TableName;
+  const maxPagesToCrawl = 15;
+  let pagesCrawled = 0;
 
-  let tbl;
-
-  if (tableNames.includes(Tablename)) {
-    tbl = await db.openTable(Tablename);
-  } else {
-    console.log("Creating new table......");
-    tbl = await db.createTable(
-      Tablename,
-      [{ vector: Array(3072).fill(0), pageContents: "", url: "" }],
-      { mode: "overwrite" }
-    );
+  let batch: { vector: number[]; pageContents: string; url: string }[] = [];
+  
+  if ((await db.tableNames()).includes(folder)) {
+    await db.dropTable(folder);
   }
 
-  function chunkText(text: string, chunkSize = 2000) {
+  const tbl = await db.createTable(folder, [
+    {
+      vector: Array(3072).fill(0),
+      pageContents: "",
+      url: "",
+    },
+    {
+      mode: "overwrite",
+    },
+  ]);
+
+  function chunks(text: string, size = 2000) {
     const chunks = [];
-    for (let i = 0; i < text.length; i += chunkSize) {
-      chunks.push(text.slice(i, i + chunkSize));
+    for (let i = 0; i < text.length; i += size) {
+      chunks.push(text.slice(i, i + size));
     }
     return chunks;
   }
 
-  try {
-    const BATCH_SIZE = 10;
-    let processedCount = 0;
-    const maxPagestoCrawl = 10;
-    const batch: { vector: number[]; pageContents: string; url: string }[] = [];
-    const crawler = new PlaywrightCrawler({
-      launchContext: {
-        launchOptions: {
-          headless: true,
-        },
-      },
-      minConcurrency: 1,
-      maxConcurrency: 1,
-      async requestHandler({ request, page, enqueueLinks, log }) {
-        if (processedCount >= maxPagestoCrawl) {
-          await crawler.teardown();
-          console.log("reached max pages to crawl");
-          return;
-        }
+  const datasetName = await Dataset.open(folder);
 
-        const title = await page.title();
+  const requestQueue = await RequestQueue.open();
+  await requestQueue.addRequest({ url });
 
-        await page.waitForSelector("body");
-        await page.evaluate(() => {
-          const elements = document.querySelectorAll("style, noscript");
-          elements.forEach((el) => el.remove());
+  const crawler = new PlaywrightCrawler({
+    requestQueue,
+    maxConcurrency: 1,
+    minConcurrency: 1,
+    async requestHandler({ request, page, enqueueLinks, log }) {
+      if (pagesCrawled >= maxPagesToCrawl) {
+        log.info("Reached max page limit. Stopping crawler...");
+        await crawler.teardown();
+        return;
+      }
+
+      pagesCrawled++;
+
+      const title = await page.title();
+      await page.waitForSelector("body");
+      await page.evaluate(() => {
+        const elements = document.querySelectorAll("style, noscript");
+        elements.forEach((el) => el.remove());
+      });
+
+      const pageContents = await page.evaluate(() => document.body.innerText);
+      log.info(`Title of ${request.loadedUrl} is '${title}'`);
+
+      datasetName.pushData({
+        title: title,
+        pageContents: pageContents,
+        url: request.loadedUrl,
+      });
+
+      const chunkarray = chunks(pageContents);
+      for (const chunk of chunkarray) {
+        const vector = await embedText(chunk);
+        batch.push({
+          vector: vector as number[],
+          pageContents: chunk,
+          url: request.loadedUrl,
         });
+      }
 
-        const pageContents = await page.evaluate(() => document.body.innerText);
+      if (batch.length >= 20) {
+        await tbl.add(batch as any);
+        batch.length = 0;
+      }
 
-        log.info(`Title of ${request.loadedUrl} is '${title}'`);
-
-        const pageChunks = chunkText(pageContents);
-
-        for (let i = 0; i < pageChunks.length; i++) {
-          const vector = await embedText(pageChunks[i]);
-          batch.push({
-            vector,
-            pageContents: pageChunks[i],
-            url: request.loadedUrl,
-          });
-        }
-
-        if (batch.length >= BATCH_SIZE) {
-          console.log("Batch length:", batch.length);
-          await tbl.add(batch);
-          batch.length = 0;
-        }
-
-        if (processedCount === maxPagestoCrawl - 1) {
-          crawler.teardown();
-          await tbl.add(batch);
-        }
-
-        processedCount++;
-        await enqueueLinks();
-      },
-    });
-    console.log(`Crawling started ${url}`);
-    await crawler.run([url]);
-    return { message: `Crawling stored successfully in folder ${folder}` };
-  } catch (error) {
-    console.error("Crawler encountered an error:", error);
-    return { message: "Crawler encountered an error" };
-  }
+      await enqueueLinks({
+        selector: "a",
+        strategy: "same-domain",
+      });
+    },
+  });
+  console.log(`Crawling started: ${url}`);
+  await crawler.run();
+  await requestQueue?.drop();
+  return { message: `Crawling for ${url} completed.` };
 };

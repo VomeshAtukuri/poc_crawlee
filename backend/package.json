@@ -11,10 +11,11 @@
         "@langchain/openai": "^0.5.11",
         "ai": "^4.3.16",
         "async-lock": "^1.4.1",
-        "crawlee": "^3.0.0",
+        "crawlee": "^3.13.7",
         "dotenv": "^16.5.0",
         "fastify": "^5.3.3",
-        "playwright": "*",
+        "p-map": "^7.0.3",
+        "playwright": "^1.52.0",
         "zod": "^3.25.48"
     },
     "devDependencies": {

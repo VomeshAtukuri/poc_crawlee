@@ -7,12 +7,12 @@ import { crawl } from "./handlers/crawlee.js";
 dotenv.config();
 
 const fastify = Fastify();
-const port = 5570;
+const port = 5571;
 
 // Root route
 fastify.get("/", async (request, reply) => {
   console.log(request.body);
-  reply.send({ message: "Hello, Worl" });
+  reply.send({ message: "Hello, World" });
 });
 
 // Crawling route
@@ -31,11 +31,10 @@ fastify.post("/crawl", async (request, reply) => {
 
 // Chat route
 fastify.post("/chat", async (request, reply) => {
-  const { message, url } = request.body as { message: string; url: string };
-  console.log(">>>>>>>>>", message, url);
-
+  const { message } = request.body as { message: string };
+  console.log(">>>>>>>>>", message);
   try {
-    const res = await chat(message, url);
+    const res = await chat(message);
     console.log(">>>>", res);
     reply.send({ text: res });
   } catch (err) {

@@ -7,7 +7,7 @@ import { crawl } from "./handlers/crawlee.js";
 dotenv.config();
 
 const fastify = Fastify();
-const port = 5571;
+const port = 5570;
 
 // Root route
 fastify.get("/", async (request, reply) => {

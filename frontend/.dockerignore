@@ -1,0 +1,25 @@
+# Node modules (not needed in image)
+node_modules
+
+# Vite build output (re-built inside Docker)
+dist
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
+.env
+.env.*
+
+# Editor directories and files
+.vscode
+.idea
+.DS_Store
+
+# Git and Docker ignore files themselves
+.git
+.gitignore
+Dockerfile
+.dockerignore

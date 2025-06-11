@@ -1,0 +1,27 @@
+version : "1"
+services:
+  frontend:
+    image: node:latest
+    build: ./frontend
+    ports:
+      - "80:80"
+    command: ["npm", "run" , "dev"]
+  backend:
+    image: node:latest
+    build: ./backend
+    ports:
+      - "3000:3000"
+    command: ["npm", "start"]
+    healthcheck:
+      test: curl --fail http://localhost:3000/health || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    restart: always
+    depends_on:
+       frontend :
+         condition: service_healthy
+networks:
+  default:
+    driver: bridge

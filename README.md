@@ -133,7 +133,7 @@ npm run dev
 
 ## 🚧 Future Enhancements
 
-* 🛡️ User authentication and usage limits
+* 🛡️ User authentication and usage limit
 * 🌍 Crawl multi-page or entire domains
 * 🧩 Add summarization and topic tagging
 * 📊 Visualize crawl data insights
